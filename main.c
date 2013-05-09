@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <time.h>
 #include "const.h"
 #include "word.h"
 #include "cw.h"
@@ -59,10 +60,17 @@ int main(int argc, char** argv){
   int verbose = VERBOSE_OFF;
   int format = TEXT_FORMAT;
   FILE* input = NULL;
+  int tries = 1000; // TODO add in getargs
 
-  // Main variables for the program.
+  // Variables for the program.
   word_list words = NULL;
   crossword cw = NULL;
+  int best_nr = -1;
+  crossword best_cw = NULL;
+  int i;
+
+  // Random initialization
+  srand(time(NULL));
 
   // Parse arguments.
   get_args(argc, argv, &input, &width, &height, &verbose, &format);
@@ -78,28 +86,53 @@ int main(int argc, char** argv){
   }
   if(verbose) fprintf(stderr, "Done.\n\n");
 
-  // Initialisation of the crossword.
-  if(verbose) fprintf(stderr, "Initialization...\n");
-  if(0 != cw_init(&cw, width, height)){
-    fprintf(stderr, "Error while initializing the crossword !\n");
-    free_words(words);
-    exit(EXIT_FAILURE);
-  }
-  if(verbose) fprintf(stderr, "Done.\n\n");
+  for(i = 0; i < tries; i++){
+    // Initialisation of the crossword.
+    if(0 != cw_init(&cw, width, height)){
+      fprintf(stderr, "Error while initializing the crossword !\n");
+      free_words(words);
+      exit(EXIT_FAILURE);
+    }
 
-  // Computing the crosword.
-  if(verbose) fprintf(stderr, "Processing...\n");
-  if(0 != cw_compute(cw, words)){
-    fprintf(stderr, "Error while computing the crossword !\n");
-    free_words(words);
-    exit(-1);
+    // Computing the crosword.
+    if(0 != cw_compute(cw, words)){
+      fprintf(stderr, "Error while computing the crossword !\n");
+      free_words(words);
+      cw_free(cw);
+      if(NULL != best_cw) cw_free(best_cw);
+      exit(-1);
+    }
+
+    // Check if first try.
+    if(NULL == best_cw){
+      best_cw = cw;
+      best_nr = best_cw->nb_words;
+
+      if(verbose)
+        fprintf(stderr, "First try, %d/%d words placed.\n",
+                        cw->nb_words, words->next_free);
+    } else if(cw->nb_words > best_nr){ // Check if better
+      cw_free(best_cw);
+      best_cw = cw;
+      best_nr = best_cw->nb_words;
+
+      if(verbose)
+        fprintf(stderr, "Did better: %d/%d words placed.\n",
+                        cw->nb_words, words->next_free);
+    } else { // Not better...
+      cw_free(cw);
+      all_words_unused(words);
+    }
+
+    // Optimization
+    if(best_nr == words->next_free){
+      if(verbose) fprintf(stderr, "Optimal reached.\n");
+      break;
+    }
   }
 
-  if(verbose){
-    fprintf(stderr, "Done.\n\n");
-    fprintf(stderr, "Number of words placed : %d/%d\n\n",
-                    cw->nb_words, words->next_free);
-  }
+  if(verbose) fprintf(stderr, "\nNumber of word placed: %d/%d\n\n",
+                              best_nr, words->next_free);
 
   // Can now free the word list.
   if(verbose) fprintf(stderr, "Liberating words memory...\n");
@@ -110,23 +143,23 @@ int main(int argc, char** argv){
   switch(format){
   case TEXT_FORMAT :
     if(verbose) fprintf(stderr, "Printing crossword in text mode...\n");
-    cw_print(stdout, cw);
+    cw_print(stdout, best_cw);
     break;
   case LATEX_FORMAT :
     if(verbose) fprintf(stderr, "Printing crossword in LaTeX mode...\n");
-    if(verbose) cw_print(stderr, cw);
-    if(0 != cw_print_latex(cw)){
+    if(verbose) cw_print(stderr, best_cw);
+    if(0 != cw_print_latex(best_cw)){
       fprintf(stderr, "Error while printing the crossword... (LaTeX mode)\n");
-      cw_free(cw);
+      cw_free(best_cw);
       exit(-1);
     }
     break;
   case HTML_FORMAT :
     if(verbose) fprintf(stderr, "Printing crossword in HTML mode...\n");
-    if(verbose) cw_print(stderr, cw);
-    if(0 != cw_print_html(cw)){
+    if(verbose) cw_print(stderr, best_cw);
+    if(0 != cw_print_html(best_cw)){
       fprintf(stderr, "Error while printing the crossword... (HTML mode)\n");
-      cw_free(cw);
+      cw_free(best_cw);
       exit(-1);
     }
     break;
@@ -137,7 +170,7 @@ int main(int argc, char** argv){
 
   // Memory free.
   if(verbose) fprintf(stderr, "Liberating crossword memory...\n");
-  cw_free(cw);
+  cw_free(best_cw);
   if(verbose) fprintf(stderr, "Done.\n\n");
 
   if(verbose) fprintf(stderr, "End of the program.\n");

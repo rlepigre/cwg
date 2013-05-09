@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "cw.h"
 #include "const.h"
 
@@ -201,9 +200,6 @@ int cw_compute(crossword cw, word_list wl){
   int pos_word;
   int x, y;
   int nb_pl;
-
-  // Random initialisation.
-  srand(time(NULL));
 
   // No words to place.
   if(0 == wl->next_free) return 0;

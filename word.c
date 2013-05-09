@@ -134,3 +134,13 @@ void free_words(word_list wl){
   free(wl->l);
   free(wl);
 }
+
+/*
+ * Mark every word to unused.
+ * wl : the word list.
+ */
+void all_words_unused(word_list wl){
+  int i;
+  for(i = 0; i < wl->next_free; i++)
+    wl->l[i].used = 0;
+}

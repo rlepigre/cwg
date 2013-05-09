@@ -47,4 +47,10 @@ void fscan_words(FILE* input, word_list* list, int verbose);
  */
 void free_words(word_list wl);
 
+/*
+ * Mark every word to unused.
+ * wl : the word list.
+ */
+void all_words_unused(word_list wl);
+
 #endif
