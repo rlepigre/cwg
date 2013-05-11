@@ -252,7 +252,7 @@ void get_args(int argc, char** argv,
   }
 
   // Read arguments.
-  while(-1 != (opt = getopt(argc, argv, "i:W:H:vlwh"))){
+  while(-1 != (opt = getopt(argc, argv, "i:W:H:n:vlwh"))){
     switch(opt){
     case 'i' :
       fn = optarg;
@@ -288,6 +288,7 @@ void get_args(int argc, char** argv,
         exit(EXIT_FAILURE);
       }
       *nr = n;
+      break;
     case 'v' :
       *v = VERBOSE_ON;
       break;
