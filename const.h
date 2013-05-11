@@ -44,5 +44,6 @@
 // Algorithm
 #define NB_LOOP 20         // Number of loops for looking for words to place.
 #define NB_RAND_CH 12      // Maximum number of random choice for insertion.
+#define NB_RUN 1000        // Number of time to run the algorithm. Keep best.
 
 #endif

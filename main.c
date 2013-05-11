@@ -62,9 +62,10 @@ void display_help(char* pname);
  * f    : printing format.
  *        0 default
  *        1 latex
+ * nr   : number of runs for the program.
  */
 void get_args(int argc, char** argv,
-              FILE** i, int* w, int* h, int* v, int* f);
+              FILE** i, int* w, int* h, int* v, int* f, int* nr);
 
 /*
  * Main program.
@@ -76,7 +77,7 @@ int main(int argc, char** argv){
   int verbose = VERBOSE_OFF;
   int format = TEXT_FORMAT;
   FILE* input = NULL;
-  int tries = 1000; // TODO add in getargs
+  int tries = NB_RUN; // TODO add in getargs
 
   // Variables for the program.
   word_list words = NULL;
@@ -89,7 +90,7 @@ int main(int argc, char** argv){
   srand(time(NULL));
 
   // Parse arguments.
-  get_args(argc, argv, &input, &width, &height, &verbose, &format);
+  get_args(argc, argv, &input, &width, &height, &verbose, &format, &tries);
   if(verbose) fprintf(stderr, "Parsing command line done.\n\n");
 
   // Reading input file.
@@ -203,6 +204,7 @@ void display_help(char* pname){
   printf("  -i file   : set input file.\n");
   printf("  -W int    : set the width of the crosswords.\n");
   printf("  -H int    : set the height of the crosswords.\n");
+  printf("  -n int    : number of runs, best crossword kept.\n");
   printf("  -v        : verbose mode.\n");
   printf("  -l        : latex format.\n");
   printf("  -w        : web format.\n");
@@ -227,9 +229,10 @@ void display_help(char* pname){
  * f    : printing format.
  *        0 default
  *        1 latex
+ * nr   : number of runs for the program.
  */
 void get_args(int argc, char** argv,
-              FILE** i, int* w, int* h, int* v, int* f){
+              FILE** i, int* w, int* h, int* v, int* f, int* nr){
   char opt;
   int n;
   char* fn;
@@ -278,6 +281,13 @@ void get_args(int argc, char** argv,
       }
       *h = n;
       break;
+    case 'n' :
+      n = atoi(optarg);
+      if(n < 1){
+        fprintf(stderr, "The algorithm must run at least once...\n");
+        exit(EXIT_FAILURE);
+      }
+      *nr = n;
     case 'v' :
       *v = VERBOSE_ON;
       break;
