@@ -19,6 +19,8 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 #### Installation Procedure ####
 
 Dependencies: None other than the standard C library.
+  * LaTeX is required in order to obtain PDF format.
+  * A web browser is required for HTML format.
 
 To install CWG on Linux:
   1) Edit the Makefile for configuration,
