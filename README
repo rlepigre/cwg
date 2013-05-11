@@ -1,0 +1,40 @@
+#### License ####
+
+Copyright (c) 2012-2013 Rodolphe Lepigre
+CWG CrossWord Generator
+
+This file is part of CWG.
+
+CWG is free software: you can redistribute it and/or modify it under the terms
+of the GNU General Public License as published by the Free Software Founda-
+tion, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
+
+#### Installation Procedure ####
+
+Dependencies: None other than the standard C library.
+
+To install CWG on Linux:
+  1) Edit the Makefile for configuration,
+  2) Run the command "make",
+  3) Run the command "make install" as root user.
+
+Usage: cwg [options]
+  -i file   : set input file.
+  -W int    : set the width of the crosswords.
+  -H int    : set the height of the crosswords.
+  -v        : verbose mode.
+  -l        : latex format.
+  -w        : web format.
+  -h        : display this help message.
+Examples:
+  cwg -i words.txt > crossword.txt
+  cwg -li words.txt | rubber-pipe --pdf > crossword.pdf
+  cwg -wi words.txt > crossword.html
+
