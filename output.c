@@ -105,7 +105,7 @@ int cw_print_latex(crossword cw){
   printf("\\usepackage[small]{cwpuzzle}\n");
   printf("\\begin{document}\n");
   printf("\\begin{center}\n");
-  printf("  \\huge{%s}\n", "Crossword Puzzle:"); // TODO allow custom title
+  printf("  \\huge{%s}\n", cw->title);
   printf("\\end{center}\n");
   printf("\\vspace{1.5cm}\n");
 
@@ -154,7 +154,7 @@ int cw_print_latex(crossword cw){
   // Print the solution on a new page.
   printf("\\newpage\n");
   printf("\\begin{center}\n");
-  printf("  \\huge{%s - Solution}\n", "Crossword Puzzle:"); // TODO allow custom title
+  printf("  \\huge{%s - Solution}\n", cw->title);
   printf("\\end{center}\n");
   printf("\\vspace{1.5cm}\n");
   printf("\\PuzzleSolution\n");
@@ -216,7 +216,7 @@ int cw_print_html(crossword cw){
   printf("<!DOCTYPE html>\n");
   printf("<html>\n");
   printf("<head>\n");
-  printf("\t<title>Crossword</title>\n");
+  printf("\t<title>%s</title>\n", cw->title);
   printf("\t<meta http-equiv=\"Content-Type\"" \
          " content=\"text/html; charset=utf-8\"/>\n");
   // CSS

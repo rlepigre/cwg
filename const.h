@@ -34,6 +34,7 @@
 #define INIT_NB 8          // Size of the word buffer at first (8 is fine).
 
 // Grid
+#define DEFAULT_TITLE "Crossword Puzzle:" // Default title of a crossword
 #define DEFAULT_WIDTH 15   // Default width of a crossword.
 #define DEFAULT_HEIGHT 15  // Default height of a crossword.
 #define MIN_SIZE 6         // Min width / height of a crossword.
