@@ -31,9 +31,10 @@
  * cw : the crossword.
  * w  : the width of the crossword.
  * h  : the height of the crossword.
+ * t  : the title of the crossword.
  * Returns 0 if all went well, -1 otherwise.
  */
-int cw_init(crossword* cw, int w, int h){
+int cw_init(crossword* cw, int w, int h, char* t){
   int i, j;
 
   if(NULL == ((*cw) = malloc(sizeof(struct __crossword__)))){
@@ -43,6 +44,14 @@ int cw_init(crossword* cw, int w, int h){
 
   (*cw)->width = w;
   (*cw)->height = h;
+
+  if (NULL == ((*cw)->title = malloc(strlen(t) * sizeof(char)))) {
+    fprintf(stderr, "Malloc error in cw_init !\n");
+    return -1;
+  }
+  
+  strcpy((*cw)->title, t);
+  
   if(NULL == ((*cw)->grid = malloc((*cw)->width * sizeof(char*)))){
     fprintf(stderr, "Malloc error in cw_init !\n");
     return -1;
@@ -74,6 +83,7 @@ void cw_free(crossword cw){
   for(i = 0; i < cw->width; i++) free(cw->grid[i]);
   free(cw->grid);
   free(cw->words);
+  free(cw->title);
   free(cw);
 }
 

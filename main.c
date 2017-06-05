@@ -57,6 +57,7 @@ void display_help(char* pname);
  * i    : result for input file.
  * w    : result for width.
  * h    : result for height.
+ * t    : result for title.
  * v    : if set to 1 verbose.
  *        otherwise don't.
  * f    : printing format.
@@ -65,7 +66,7 @@ void display_help(char* pname);
  * nr   : number of runs for the program.
  */
 void get_args(int argc, char** argv,
-              FILE** i, int* w, int* h, int* v, int* f, int* nr);
+              FILE** i, int* w, int* h, char** t, int* v, int* f, int* nr);
 
 /*
  * Main program.
@@ -77,6 +78,7 @@ int main(int argc, char** argv){
   int verbose = VERBOSE_OFF;
   int format = TEXT_FORMAT;
   FILE* input = NULL;
+  char* title = DEFAULT_TITLE;
   int tries = NB_RUN; // TODO add in getargs
 
   // Variables for the program.
@@ -90,7 +92,7 @@ int main(int argc, char** argv){
   srand(time(NULL));
 
   // Parse arguments.
-  get_args(argc, argv, &input, &width, &height, &verbose, &format, &tries);
+  get_args(argc, argv, &input, &width, &height, &title, &verbose, &format, &tries);
   if(verbose) fprintf(stderr, "Parsing command line done.\n\n");
 
   // Reading input file.
@@ -105,7 +107,7 @@ int main(int argc, char** argv){
 
   for(i = 0; i < tries; i++){
     // Initialisation of the crossword.
-    if(0 != cw_init(&cw, width, height)){
+    if(0 != cw_init(&cw, width, height, title)){
       fprintf(stderr, "Error while initializing the crossword !\n");
       free_words(words);
       exit(EXIT_FAILURE);
@@ -204,6 +206,7 @@ void display_help(char* pname){
   printf("  -i file   : set input file.\n");
   printf("  -W int    : set the width of the crosswords.\n");
   printf("  -H int    : set the height of the crosswords.\n");
+  printf("  -t string : set the title of the crosswords.\n");
   printf("  -n int    : number of runs, best crossword kept.\n");
   printf("  -v        : verbose mode.\n");
   printf("  -l        : latex format.\n");
@@ -224,6 +227,7 @@ void display_help(char* pname){
  * i    : result for input file.
  * w    : result for width.
  * h    : result for height.
+ * t    : result for title.
  * v    : if set to 1 verbose.
  *        otherwise don't.
  * f    : printing format.
@@ -232,7 +236,7 @@ void display_help(char* pname){
  * nr   : number of runs for the program.
  */
 void get_args(int argc, char** argv,
-              FILE** i, int* w, int* h, int* v, int* f, int* nr){
+              FILE** i, int* w, int* h, char** t, int* v, int* f, int* nr){
   char opt;
   int n;
   char* fn;
@@ -241,6 +245,7 @@ void get_args(int argc, char** argv,
   *i = NULL;
   *w = DEFAULT_WIDTH;
   *h = DEFAULT_HEIGHT;
+  *t = DEFAULT_TITLE;
   *v = VERBOSE_OFF;
   *f = TEXT_FORMAT;
 
@@ -252,7 +257,7 @@ void get_args(int argc, char** argv,
   }
 
   // Read arguments.
-  while(-1 != (opt = getopt(argc, argv, "i:W:H:n:vlwh"))){
+  while(-1 != (opt = getopt(argc, argv, "i:t:W:H:n:vlwh"))){
     switch(opt){
     case 'i' :
       fn = optarg;
@@ -260,6 +265,9 @@ void get_args(int argc, char** argv,
         fprintf(stderr, "Cannot open the input file (may not exist)...");
         exit(EXIT_FAILURE);
       }
+      break;
+    case 't':
+      *t = optarg;
       break;
     case 'W' :
       n = atoi(optarg);

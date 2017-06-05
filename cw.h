@@ -56,6 +56,7 @@ typedef struct __crossword__{
   placed_word* words;    // The words in the grid.
   int nb_words;          // Number of words in the grid.
   int size_wlist;        // Number of words that can be stored in the list.
+  char* title;           // The title of the crossword
 }*crossword;
 
 /*
@@ -63,9 +64,10 @@ typedef struct __crossword__{
  * cw : the crossword.
  * w  : the width of the crossword.
  * h  : the height of the crossword.
+ * t  : the title of the crossword.
  * Returns 0 if all went well, -1 otherwise.
  */
-int cw_init(crossword* cw, int w, int h);
+int cw_init(crossword* cw, int w, int h, char* t);
 
 /*
  * Free the memory allocated to a crossword.
